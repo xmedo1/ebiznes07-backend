@@ -32,7 +32,7 @@ func main() {
                     http.Error(w, "Bad request", http.StatusBadRequest)
                     return
                 }
-			fmt.Printf("Otrzymano platnosc: %v\n", data)
+			fmt.Printf("Otrzymano platnosc.)")
 			w.WriteHeader(http.StatusCreated)
 		}
 	})
