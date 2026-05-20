@@ -19,21 +19,28 @@ func main() {
 			{ID: 1, Name: "Jablko", Price: 1.2},
 			{ID: 2, Name: "Banan", Price: 1.5},
 		}
-		json.NewEncoder(w).Encode(products)
+		if err := json.NewEncoder(w).Encode(products); err != nil {
+                http.Error(w, "Blad JSONa", http.StatusInternalServerError)
+            }
 	})
 
 	http.HandleFunc("/payments", func(w http.ResponseWriter, r *http.Request) {
 		enableCors(&w)
 		if r.Method == "POST" {
 			var data map[string]interface{}
-			json.NewDecoder(r.Body).Decode(&data)
+			if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+                    http.Error(w, "Bad request", http.StatusBadRequest)
+                    return
+                }
 			fmt.Printf("Otrzymano platnosc: %v\n", data)
 			w.WriteHeader(http.StatusCreated)
 		}
 	})
 
 	fmt.Println("URL backendu: http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+            fmt.Printf("Blad uruchamiania serwera: %v\n", err)
+        }
 }
 
 func enableCors(w *http.ResponseWriter) {
